@@ -153,7 +153,7 @@ async def register(
 
         logger.info(f"✓ Registration successful for {user.email} with 30-day trial")
 
-        # Send welcome email
+        # Send welcome email (Background Task)
         email_service = EmailService()
         background_tasks.add_task(
             email_service.send_welcome_email,

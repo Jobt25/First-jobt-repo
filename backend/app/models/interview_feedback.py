@@ -1,7 +1,7 @@
 # ==================== app/models/interview_feedback.py ====================
 """Interview feedback model"""
 
-from sqlalchemy import Column, Text, Float, Integer, ForeignKey
+from sqlalchemy import Column, Text, Float, Integer, ForeignKey, JSON
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 
@@ -32,12 +32,12 @@ class InterviewFeedback(BaseModel):
     positivity_score = Column(Float, nullable=False)
 
     # Detailed analysis
-    strengths = Column(JSONB, nullable=True)  # ["Clear communication", "Good examples"]
-    weaknesses = Column(JSONB, nullable=True)  # ["Too many fillers", "Vague answers"]
+    strengths = Column(JSON().with_variant(JSONB, "postgresql"), nullable=True)  # ["Clear communication", "Good examples"]
+    weaknesses = Column(JSON().with_variant(JSONB, "postgresql"), nullable=True)  # ["Too many fillers", "Vague answers"]
 
     # AI-generated insights
     summary = Column(Text, nullable=True)
-    actionable_tips = Column(JSONB, nullable=True)  # ["Practice STAR method"]
+    actionable_tips = Column(JSON().with_variant(JSONB, "postgresql"), nullable=True)  # ["Practice STAR method"]
 
     # Metrics breakdown
     filler_words_count = Column(Integer, default=0, nullable=False)

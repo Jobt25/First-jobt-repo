@@ -20,20 +20,19 @@ import logging
 import time
 from datetime import datetime
 
-from app.core.database import init_db, close_db, check_db_connection
+from .core.database import init_db, close_db, check_db_connection
 # from app.core.middleware import setup_middleware
-from app.config import settings
+from .config import settings
 
 # Import routers
 from .routers.api.v1.auth_route import router as auth_router
 from .routers.api.v1.categories_route import router as categories_router
-
+from .routers.api.v1.interviews_route import router as interviews_router
+from .routers.api.v1.feedback_route import router as feedback_router
+from .routers.api.v1.analytics_route import router as analytics_router
+from .routers.api.v1.admin_route import router as admin_router
 # from app.routers.api.v1.users import router as users_router
-# from app.routers.api.v1.interviews import router as interviews_router
-# from app.routers.api.v1.feedback import router as feedback_router
-# from app.routers.api.v1.analytics import router as analytics_router
 # from app.routers.api.v1.subscriptions import router as subscriptions_router
-# from app.routers.api.v1.admin import router as admin_router
 
 # Configure logging
 logging.basicConfig(
@@ -231,18 +230,13 @@ api_v1_prefix = "/api/v1"
 # Auth routes (ACTIVE)
 app.include_router(auth_router, prefix=api_v1_prefix, tags=["Authentication"])
 app.include_router(categories_router, prefix=api_v1_prefix, tags=["Job Categories"])
+app.include_router(interviews_router, prefix=api_v1_prefix, tags=["Interviews"])
+app.include_router(feedback_router, prefix=api_v1_prefix, tags=["Feedback"])
+app.include_router(analytics_router, prefix=api_v1_prefix, tags=["Analytics"])
+app.include_router(admin_router, prefix=api_v1_prefix, tags=["Admin"])
 
 # User routes (TODO)
 # app.include_router(users_router, prefix=api_v1_prefix, tags=["Users"])
-
-# Interview routes (TODO)
-# app.include_router(interviews_router, prefix=api_v1_prefix, tags=["Interviews"])
-
-# Feedback routes (TODO)
-# app.include_router(feedback_router, prefix=api_v1_prefix, tags=["Feedback"])
-
-# Analytics routes (TODO)
-# app.include_router(analytics_router, prefix=api_v1_prefix, tags=["Analytics"])
 
 # Subscription routes (TODO)
 # app.include_router(subscriptions_router, prefix=api_v1_prefix, tags=["Subscriptions"])

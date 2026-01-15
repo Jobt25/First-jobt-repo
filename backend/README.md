@@ -347,34 +347,23 @@ alembic upgrade head
 
 See [ROADMAP.md](ROADMAP.md) for detailed feature timeline.
 
-### Q1 2026
-- ✅ MVP Launch (Text-based interviews)
-- ✅ Payment integration (Paystack)
-- 🔄 Feedback generation
-- 🔄 Analytics dashboard
+## 🎯 What's Next (Phase 2 - Planned)
 
-### Q2 2026
-- 📅 Video interviews
-- 📅 Salary negotiation practice
-- 📅 Mobile app (React Native)
-- 📅 Multiple language support
-
-### Q3 2026
-- 📅 Team/Corporate features
-- 📅 LinkedIn integration
-- 📅 Advanced analytics
-- 📅 API for partners
+### Payments & Admin (Jan 2026)
+- 💳 **Paystack Integration** - Secure payments and subscription handling
+- 👥 **Admin Dashboard** - User management and system metrics
+- 📧 **Email Notifications** - Transactional emails and alerts
 
 ---
 
 ## 📈 Status
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Tests](https://img.shields.io/badge/tests-100%25-brightgreen)
-![Coverage](https://img.shields.io/badge/coverage-85%25-green)
+![Tests](https://img.shields.io/badge/tests-pass-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-70%25-green)
 
-**Current Version:** 1.0.0 (MVP)  
-**Last Updated:** December 2025  
+**Current Version:** 1.2.0 (Phase 1 Complete)  
+**Last Updated:** January 14, 2026  
 **Status:** 🟢 Active Development
 
 ---

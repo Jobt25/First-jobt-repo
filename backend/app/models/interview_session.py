@@ -1,7 +1,7 @@
 # ==================== app/models/interview_session.py ====================
 """Interview session model"""
 
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Enum as SQLEnum
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Enum as SQLEnum, JSON
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 import enum
@@ -46,8 +46,8 @@ class InterviewSession(BaseModel):
     )
     difficulty = Column(String(50), nullable=False)  # beginner/intermediate/advanced
 
-    # Conversation data (JSONB for flexibility)
-    conversation_history = Column(JSONB, default=list, nullable=False)
+    # Conversation data (JSONB for flexibility, JSON for SQLite tests)
+    conversation_history = Column(JSON().with_variant(JSONB, "postgresql"), default=list, nullable=False)
     # Format: [{"role": "interviewer", "content": "...", "timestamp": "..."}, ...]
 
     # Timing

@@ -13,13 +13,52 @@ All models should inherit from BaseModel for consistency.
 """
 
 from datetime import datetime
-from sqlalchemy import Column, DateTime
+from sqlalchemy import Column, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import declarative_mixin
+from sqlalchemy.types import TypeDecorator, CHAR
 import uuid
 
 from ..core.database import Base
+
+
+# ==================== CUSTOM TYPES ====================
+
+class GUID(TypeDecorator):
+    """
+    Platform-independent GUID type.
+    
+    Uses PostgreSQL's UUID type for PostgreSQL,
+    and CHAR(36) for SQLite/others, handling conversion transparently.
+    """
+    impl = CHAR
+    cache_ok = True
+
+    def load_dialect_impl(self, dialect):
+        if dialect.name == 'postgresql':
+            return dialect.type_descriptor(UUID(as_uuid=True))
+        else:
+            return dialect.type_descriptor(CHAR(36))
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return value
+        if dialect.name == 'postgresql':
+            return str(value)
+        if not isinstance(value, uuid.UUID):
+            return str(uuid.UUID(value))
+        return str(value)
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return value
+        if not isinstance(value, uuid.UUID):
+            try:
+                return uuid.UUID(value)
+            except ValueError:
+                return value
+        return value
 
 
 # ==================== MIXINS ====================
@@ -65,7 +104,7 @@ class UUIDMixin:
     @declared_attr
     def id(cls):
         return Column(
-            UUID(as_uuid=True),
+            GUID(),
             primary_key=True,
             default=uuid.uuid4,
             unique=True,

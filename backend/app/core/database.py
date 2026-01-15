@@ -11,11 +11,40 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Create async engine
+# Create async engine
+# Handle invalid query params for asyncpg
+db_url = settings.DATABASE_URL
+connect_args = {}
+
+# List of params not supported by asyncpg
+unsupported_params = ["sslmode", "channel_binding", "gssencmode"]
+
+if "?" in db_url:
+    base_url, query = db_url.split("?", 1)
+    params = query.split("&")
+    valid_params = []
+    
+    found_unsupported = False
+    for p in params:
+        key = p.split("=")[0]
+        if key in unsupported_params:
+            found_unsupported = True
+        else:
+            valid_params.append(p)
+            
+    # Reconstruct URL without unsupported params
+    db_url = base_url + ("?" + "&".join(valid_params) if valid_params else "")
+    
+    # If we stripped params (likely prod DB), enforce SSL
+    if found_unsupported or "neon.tech" in db_url or "supabase.co" in db_url:
+        connect_args["ssl"] = "require"
+
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    db_url,
     echo=settings.DEBUG,
     future=True,
     poolclass=NullPool,  # disable pooling in debug
+    connect_args=connect_args
 )
 
 # Create async session factory

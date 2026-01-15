@@ -26,7 +26,10 @@ class Settings(BaseSettings):
 
     # OpenAI
     OPENAI_API_KEY: str
-    OPENAI_MODEL: str = "gpt-4"
+    OPENAI_MODEL: str
+    OPENAI_BASE_URL: str
+    OPENAI_MAX_TOKENS: int = 1000
+    MAX_SESSION_DURATION: int = 1800
     MAX_TOKENS_PER_SESSION: int = 4000
 
     # Email (for password reset)

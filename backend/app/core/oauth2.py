@@ -17,6 +17,7 @@ from fastapi import Depends, status, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials, OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 import logging
 
 from .database import get_db
@@ -118,7 +119,7 @@ async def get_current_user(
     # Fetch user from database
     try:
         result = await db.execute(
-            select(User).where(User.email == user_email)
+            select(User).options(joinedload(User.subscription)).where(User.email == user_email)
         )
         user = result.scalar_one_or_none()
 
@@ -135,6 +136,12 @@ async def get_current_user(
             )
 
         logger.debug(f"✓ Authenticated: {user.email} (role: {user.role})")
+        logger.debug(f"User subscription: {user.subscription}")
+        if user.subscription:
+             logger.debug(f"Subscription status: {user.subscription.status}")
+        else:
+             logger.warning(f"!!! User {user.email} HAS NO SUBSCRIPTION LOADED !!!")
+             
         return user
 
     except HTTPException:

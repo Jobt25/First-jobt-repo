@@ -45,6 +45,7 @@ from app.schemas.user_schema import (
 from app.models.user import User
 from app.models.password_reset import PasswordReset
 from app.models.subscription import Subscription
+from app.services.email_service import EmailService
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -85,6 +86,7 @@ async def create_trial_subscription(user_id: str, db: AsyncSession) -> Subscript
 @router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
 async def register(
         user_data: UserCreate,
+        background_tasks: BackgroundTasks,
         db: AsyncSession = Depends(get_db)
 ):
     """
@@ -150,6 +152,14 @@ async def register(
         await db.refresh(user)
 
         logger.info(f"✓ Registration successful for {user.email} with 30-day trial")
+
+        # Send welcome email
+        email_service = EmailService()
+        background_tasks.add_task(
+            email_service.send_welcome_email,
+            user.email,
+            user.full_name or "User"
+        )
 
         # Create tokens
         access_token = create_access_token(
@@ -485,18 +495,19 @@ async def request_password_reset(
         db.add(password_reset)
         await db.commit()
 
-        # TODO: Send email in background
-        # background_tasks.add_task(
-        #     send_password_reset_email,
-        #     user.email,
-        #     reset_token
-        # )
+        # Send email in background
+        email_service = EmailService()
+        background_tasks.add_task(
+            email_service.send_password_reset_email,
+            user.email,
+            reset_token
+        )
 
         logger.info(f"Reset token generated for {user.email}")
         logger.warning(
             f"[MVP MODE] Reset token for {user.email}: {reset_token}\n"
             f"Reset link: http://localhost:3000/reset-password?token={reset_token}\n"
-            f"In production, this will be sent via email."
+            f"Email sent via EmailService (check logs if mock mode)."
         )
     else:
         logger.info(f"Password reset requested for non-existent email: {reset_data.email}")

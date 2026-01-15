@@ -50,12 +50,23 @@ class InterviewMessageRequest(BaseModel):
     content: str = Field(..., min_length=1, max_length=5000)
 
 
+class ProgressInfo(BaseModel):
+    """Progress tracking information"""
+    questions_asked: int
+    total_questions: int
+    percentage: int
+
+
 class InterviewMessageResponse(BaseModel):
     """AI's response to user"""
     message: str
     is_final: bool = False  # True if interview should end
     tokens_used: int
     session_status: InterviewStatus
+    progress: ProgressInfo  # Progress tracking
+    time_remaining_minutes: Optional[int] = None  # Minutes remaining in session
+    time_warning: Optional[str] = None  # Warning if time running out
+
 
 
 class InterviewEndRequest(BaseModel):

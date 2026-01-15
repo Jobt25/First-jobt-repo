@@ -51,6 +51,7 @@ class EmailService:
                 password=settings.SMTP_PASSWORD,
                 use_tls=True if settings.SMTP_PORT == 465 else False,
                 start_tls=True if settings.SMTP_PORT == 587 else False,
+                timeout=30  # Increase timeout for Render/Cloud environments
             )
             logger.info(f"✓ Email sent to {to_email}: {subject}")
             return True

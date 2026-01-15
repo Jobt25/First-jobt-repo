@@ -12,7 +12,7 @@ from typing import Optional
 class Settings(BaseSettings):
     # Application
     APP_NAME: str = "Jobt AI Career Coach"
-    VERSION: str = "1.0.0"
+    VERSION: str = "1.3.0"
     DEBUG: bool = True
     PORT: int = 8000
 
